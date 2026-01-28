@@ -1,0 +1,6 @@
+-r requirements.txt
+Flask-Migrate==4.0.5
+pytest==7.4.0
+pytest-flask==1.2.0
+qrcode==7.4.2
+Pillow==9.5.0

@@ -4,9 +4,14 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 import secrets
 import pyotp
-import qrcode
-from io import BytesIO
 import base64
+
+try:
+    import qrcode
+    from io import BytesIO
+    HAS_QRCODE = True
+except ImportError:
+    HAS_QRCODE = False
 
 db = SQLAlchemy()
 
@@ -96,6 +101,10 @@ class User(UserMixin, db.Model):
         """Generate QR code for 2FA"""
         if not self.two_fa_secret:
             self.setup_2fa()
+        
+        if not HAS_QRCODE:
+            # Return placeholder if qrcode not available
+            return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Crect fill='%23f0f0f0' width='200' height='200'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' fill='%23666'%3EQR Code unavailable%3C/text%3E%3C/svg%3E"
         
         totp = pyotp.TOTP(self.two_fa_secret)
         uri = totp.provisioning_uri(name=self.email, issuer_name='Flask Auth System')
