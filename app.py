@@ -1,11 +1,9 @@
 from flask import Flask
 from flask_login import LoginManager
-from flask_migrate import Migrate
 from flask_mail import Mail
 from config import Config
 from models import db, User
 
-migrate = Migrate()
 mail = Mail()
 
 def create_app():
@@ -15,7 +13,6 @@ def create_app():
     
     # Initialize extensions
     db.init_app(app)
-    migrate.init_app(app, db)
     mail.init_app(app)
     
     # Initialize login manager
